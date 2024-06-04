@@ -1,0 +1,4 @@
+# Included in 
+pydantic
+# pip install -r requirement.txt 
+pip install requests
