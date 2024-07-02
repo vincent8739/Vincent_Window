@@ -1,9 +1,12 @@
 import psycopg2
 import data
+import os
+from dotenv import load_dotenv
+load_dotenv
 
-def main():
-    
-    conn = psycopg2.connect("postgresql://vincent_9gbc_user:AyMAZPJwEA89Ye96h7WFj5GLEw3gT8PH@dpg-cpscsdij1k6c738l6j1g-a.singapore-postgres.render.com/vincent_9gbc")
+
+def main():    
+    conn = psycopg2.connect("postgresql://tvdi_et5g_user:rO4f8W7mB0kylH1UvACmrEKJSrznix20@dpg-cpscs956l47c73e3h0bg-a.singapore-postgres.render.com/tvdi_et5g")
     with conn: #with conn會自動commit(),手動close
         with conn.cursor() as cursor: #自動close()
             sql = '''
@@ -19,7 +22,8 @@ def main():
                 return_bikes SMALLINT,
                 lat REAL,
                 lng REAL,
-                act boolean
+                act boolean,
+                UNIQUE (sna, updateTime)
             );
             '''
             cursor.execute(sql)
@@ -29,7 +33,9 @@ def main():
         with conn.cursor() as cursor:            
             insert_sql = '''
             INSERT INTO youbike(sna, sarea, ar, mday, updatetime, total, rent_bikes,return_bikes,lat,lng,act)
-            VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);
+            VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
+            ON CONFLICT (sna, updateTime) 
+			DO NOTHING;
             '''
             for site in all_data:
                 cursor.execute(insert_sql,(site['sna'],
